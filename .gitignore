@@ -1,0 +1,38 @@
+# === IDE ===
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+
+# === Build output ===
+out/
+target/
+build/
+*.class
+*.jar
+*.war
+
+# === OS ===
+.DS_Store
+Thumbs.db
+nul
+
+# === Environment / secrets ===
+.env
+.env.*
+!.env.example
+
+# === Claude Code ===
+.claude/settings.local.json
+
+# === Node (Angular frontend, tooling) ===
+node_modules/
+dist/
+.angular/
+
+# === Logs ===
+*.log
+
+# === Docker ===
+docker-compose.override.yml
