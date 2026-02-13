@@ -3,6 +3,8 @@ spring:
     url: jdbc:postgresql://localhost:5432/employee_db
     username: employee_user
     password: employee_pass
+  flyway:
+    locations: classpath:db/migration,classpath:db/seed
   jpa:
     show-sql: true
     properties:

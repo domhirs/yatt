@@ -5,6 +5,8 @@ spring:
     password: test_pass
   flyway:
     clean-disabled: false
+    locations: classpath:db/migration
+    ignore-migration-patterns: "*:missing"
 
 logging:
   level:
