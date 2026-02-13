@@ -1,0 +1,11 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/employee_test_db
+    username: test_user
+    password: test_pass
+  flyway:
+    clean-disabled: false
+
+logging:
+  level:
+    com.timetracker: INFO
