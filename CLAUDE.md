@@ -54,10 +54,18 @@ Work is organized into **stages → stories → tasks**. See [`docs/PROCESS.md`]
 - [`docs/diagrams/development-workflow.excalidraw`](docs/diagrams/development-workflow.excalidraw) — Dev process flowchart
 - [`docs/diagrams/architecture-overview.excalidraw`](docs/diagrams/architecture-overview.excalidraw) — Full platform architecture
 - [`docs/diagrams/stage1-components.excalidraw`](docs/diagrams/stage1-components.excalidraw) — Employee service internals
+- [`docs/diagrams/database-erm.excalidraw`](docs/diagrams/database-erm.excalidraw) — Database entity-relationship model
 
 ## Build & Run
 
-No build system is configured yet. Stage 1 will introduce Maven or Gradle for the employee-service.
+```bash
+# Start Postgres
+docker compose -f docker-compose.yaml -f docker-compose.dev.yaml up -d
+
+# Run employee-service (dev profile)
+cd employee-service
+JAVA_HOME="C:/Program Files/Eclipse Adoptium/jdk-25.0.2.10-hotspot" ./mvnw.cmd spring-boot:run -Dspring-boot.run.profiles=dev
+```
 
 ## Project Structure
 
