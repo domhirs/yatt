@@ -1,0 +1,743 @@
+openapi: 3.1.0
+
+info:
+  title: Employee Service API
+  description: |
+    REST API for employee management in the yatt time-tracking platform.
+
+    ## Error handling
+    All errors use the same `ErrorResponse` shape. Validation failures (422) additionally
+    populate the `details` array with per-field messages.
+
+    ## Optimistic locking
+    `EmployeeResponse` includes a `version` field. On PATCH requests, clients **must**
+    send this value back in the request body. If the version has changed since the client
+    last read the resource, the server returns 409 Conflict.
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:8080/api/v1
+    description: Local development server
+
+tags:
+  - name: Employees
+    description: Employee CRUD and search operations
+  - name: Org Chart
+    description: Organisational hierarchy operations
+
+# ─────────────────────────────────────────────────────────────────────────────
+# PATHS
+# ─────────────────────────────────────────────────────────────────────────────
+paths:
+
+  # ── /employees ───────────────────────────────────────────────────────────
+  /employees:
+
+    post:
+      tags: [Employees]
+      operationId: createEmployee
+      summary: Create a new employee
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateEmployeeRequest'
+            example:
+              firstName: "Jane"
+              lastName: "Smith"
+              email: "jane.smith@example.com"
+              department: "Engineering"
+              role: "Senior Developer"
+              hireDate: "2025-03-15"
+              managerId: "a0000000-0000-0000-0000-000000000002"
+      responses:
+        '201':
+          description: Employee created successfully
+          headers:
+            Location:
+              description: URL of the created employee
+              schema:
+                type: string
+                format: uri
+                example: "/api/v1/employees/f47ac10b-58cc-4372-a567-0e02b2c3d479"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmployeeResponse'
+              example:
+                id: "f47ac10b-58cc-4372-a567-0e02b2c3d479"
+                firstName: "Jane"
+                lastName: "Smith"
+                email: "jane.smith@example.com"
+                department: "Engineering"
+                role: "Senior Developer"
+                hireDate: "2025-03-15"
+                managerId: "a0000000-0000-0000-0000-000000000002"
+                status: "ACTIVE"
+                version: 0
+                createdAt: "2026-02-12T10:00:00Z"
+                updatedAt: "2026-02-12T10:00:00Z"
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    get:
+      tags: [Employees]
+      operationId: listEmployees
+      summary: List employees with optional filters and pagination
+      description: |
+        Returns a paginated list of employees. Defaults to ACTIVE employees only.
+        Combine filters freely — e.g., department=Engineering&role=Developer.
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/SizeParam'
+        - $ref: '#/components/parameters/SortParam'
+        - $ref: '#/components/parameters/DepartmentFilter'
+        - $ref: '#/components/parameters/RoleFilter'
+        - $ref: '#/components/parameters/StatusFilter'
+      responses:
+        '200':
+          description: Paginated list of employees
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PagedEmployeeResponse'
+              example:
+                content:
+                  - id: "a0000000-0000-0000-0000-000000000005"
+                    firstName: "Priya"
+                    lastName: "Patel"
+                    email: "priya.patel@timetracker.dev"
+                    department: "Engineering"
+                    role: "Senior Developer"
+                    hireDate: "2021-09-01"
+                    managerId: "a0000000-0000-0000-0000-000000000004"
+                    status: "ACTIVE"
+                    version: 0
+                    createdAt: "2026-02-12T10:00:00Z"
+                    updatedAt: "2026-02-12T10:00:00Z"
+                page: 0
+                size: 20
+                totalElements: 1
+                totalPages: 1
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  # ── /employees/search ────────────────────────────────────────────────────
+  # IMPORTANT: must be declared BEFORE /employees/{id} so that the literal
+  # path segment "search" takes precedence over the {id} path variable.
+  /employees/search:
+
+    get:
+      tags: [Employees]
+      operationId: searchEmployees
+      summary: Search employees by name
+      description: |
+        Case-insensitive search across `firstName` and `lastName`.
+        Only ACTIVE employees are returned.
+      parameters:
+        - name: q
+          in: query
+          required: true
+          description: Search term (min 1 character, matches first or last name)
+          schema:
+            type: string
+            minLength: 1
+          example: "patel"
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/SizeParam'
+      responses:
+        '200':
+          description: Paginated search results
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PagedEmployeeResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  # ── /employees/{id} ──────────────────────────────────────────────────────
+  /employees/{id}:
+
+    parameters:
+      - $ref: '#/components/parameters/EmployeeId'
+
+    get:
+      tags: [Employees]
+      operationId: getEmployee
+      summary: Get employee by ID
+      description: |
+        Returns both ACTIVE and INACTIVE employees. Direct ID access implies the caller
+        already holds a valid reference — unlike the list endpoint which hides inactive employees.
+      responses:
+        '200':
+          description: Employee found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmployeeResponse'
+              example:
+                id: "a0000000-0000-0000-0000-000000000001"
+                firstName: "Elena"
+                lastName: "Rodriguez"
+                email: "elena.rodriguez@timetracker.dev"
+                department: "Executive"
+                role: "CEO"
+                hireDate: "2020-01-15"
+                managerId: null
+                status: "ACTIVE"
+                version: 0
+                createdAt: "2026-02-12T10:00:00Z"
+                updatedAt: "2026-02-12T10:00:00Z"
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    patch:
+      tags: [Employees]
+      operationId: updateEmployee
+      summary: Partially update an employee
+      description: |
+        PATCH semantics — only fields present in the request body are updated.
+        Omitted fields retain their current values.
+
+        The `version` field is **required** for optimistic locking. Send back the
+        `version` value from the last GET response to prevent overwriting concurrent changes.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateEmployeeRequest'
+            example:
+              department: "Platform Engineering"
+              version: 0
+      responses:
+        '200':
+          description: Employee updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmployeeResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    delete:
+      tags: [Employees]
+      operationId: deleteEmployee
+      summary: Soft-delete an employee
+      description: |
+        Sets the employee's status to INACTIVE. The record is **not** physically deleted —
+        it remains accessible by direct ID but is excluded from list results.
+
+        **Prerequisite**: the employee must have no active direct reports. Reassign them first.
+      responses:
+        '204':
+          description: Employee deactivated successfully (no response body)
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  # ── /employees/{id}/direct-reports ───────────────────────────────────────
+  /employees/{id}/direct-reports:
+
+    parameters:
+      - $ref: '#/components/parameters/EmployeeId'
+
+    get:
+      tags: [Org Chart]
+      operationId: getDirectReports
+      summary: Get direct reports of an employee
+      description: Returns all employees whose manager is the given employee.
+      responses:
+        '200':
+          description: List of direct reports (may be empty)
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EmployeeResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  # ── /employees/{id}/reporting-chain ──────────────────────────────────────
+  /employees/{id}/reporting-chain:
+
+    parameters:
+      - $ref: '#/components/parameters/EmployeeId'
+
+    get:
+      tags: [Org Chart]
+      operationId: getReportingChain
+      summary: Get the reporting chain of an employee
+      description: |
+        Returns an ordered list starting with the given employee, followed by their manager,
+        then their manager's manager, and so on up to the root (the employee with no manager).
+      responses:
+        '200':
+          description: Ordered reporting chain (at least one element — the employee themselves)
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EmployeeResponse'
+              example:
+                - id: "a0000000-0000-0000-0000-000000000005"
+                  firstName: "Priya"
+                  lastName: "Patel"
+                  role: "Senior Developer"
+                  managerId: "a0000000-0000-0000-0000-000000000004"
+                - id: "a0000000-0000-0000-0000-000000000004"
+                  firstName: "Michael"
+                  lastName: "Thompson"
+                  role: "Engineering Manager"
+                  managerId: "a0000000-0000-0000-0000-000000000002"
+                - id: "a0000000-0000-0000-0000-000000000002"
+                  firstName: "James"
+                  lastName: "Chen"
+                  role: "VP of Engineering"
+                  managerId: "a0000000-0000-0000-0000-000000000001"
+                - id: "a0000000-0000-0000-0000-000000000001"
+                  firstName: "Elena"
+                  lastName: "Rodriguez"
+                  role: "CEO"
+                  managerId: null
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+# ─────────────────────────────────────────────────────────────────────────────
+# COMPONENTS
+# ─────────────────────────────────────────────────────────────────────────────
+components:
+
+  # ── Reusable parameters ──────────────────────────────────────────────────
+  parameters:
+
+    EmployeeId:
+      name: id
+      in: path
+      required: true
+      description: UUID of the employee
+      schema:
+        type: string
+        format: uuid
+      example: "a0000000-0000-0000-0000-000000000001"
+
+    PageParam:
+      name: page
+      in: query
+      required: false
+      description: Zero-based page index (first page is 0)
+      schema:
+        type: integer
+        default: 0
+        minimum: 0
+
+    SizeParam:
+      name: size
+      in: query
+      required: false
+      description: Number of records per page (max 100)
+      schema:
+        type: integer
+        default: 20
+        minimum: 1
+        maximum: 100
+
+    SortParam:
+      name: sort
+      in: query
+      required: false
+      description: "Sort field and direction, e.g. lastName,asc or hireDate,desc"
+      schema:
+        type: string
+        default: "lastName,asc"
+      example: "hireDate,desc"
+
+    DepartmentFilter:
+      name: department
+      in: query
+      required: false
+      description: Filter by department (exact, case-sensitive match)
+      schema:
+        type: string
+      example: "Engineering"
+
+    RoleFilter:
+      name: role
+      in: query
+      required: false
+      description: Filter by role (exact, case-sensitive match)
+      schema:
+        type: string
+      example: "Senior Developer"
+
+    StatusFilter:
+      name: status
+      in: query
+      required: false
+      description: Filter by status (defaults to ACTIVE when omitted)
+      schema:
+        type: string
+        enum: [ACTIVE, INACTIVE]
+
+  # ── Reusable responses ───────────────────────────────────────────────────
+  responses:
+
+    BadRequest:
+      description: Bad request — invalid input format (e.g. malformed UUID)
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            status: 400
+            error: "Bad Request"
+            message: "Invalid parameter format: id"
+            details: []
+            timestamp: "2026-02-12T10:00:00Z"
+            path: "/api/v1/employees/not-a-uuid"
+
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            status: 404
+            error: "Not Found"
+            message: "Employee with id '550e8400-e29b-41d4-a716-446655440000' not found"
+            details: []
+            timestamp: "2026-02-12T10:00:00Z"
+            path: "/api/v1/employees/550e8400-e29b-41d4-a716-446655440000"
+
+    Conflict:
+      description: Conflict — duplicate resource or concurrent modification
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          examples:
+            duplicateEmail:
+              summary: Email already taken
+              value:
+                status: 409
+                error: "Conflict"
+                message: "Employee with email 'jane@example.com' already exists"
+                details: []
+                timestamp: "2026-02-12T10:00:00Z"
+                path: "/api/v1/employees"
+            optimisticLock:
+              summary: Concurrent modification
+              value:
+                status: 409
+                error: "Conflict"
+                message: "Resource was modified by another request. Refresh and try again."
+                details: []
+                timestamp: "2026-02-12T10:00:00Z"
+                path: "/api/v1/employees/f47ac10b-58cc-4372-a567-0e02b2c3d479"
+
+    UnprocessableEntity:
+      description: Validation failed — one or more fields are invalid
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            status: 422
+            error: "Unprocessable Entity"
+            message: "Validation failed"
+            details:
+              - field: "email"
+                message: "must be a well-formed email address"
+              - field: "firstName"
+                message: "must not be blank"
+            timestamp: "2026-02-12T10:00:00Z"
+            path: "/api/v1/employees"
+
+    InternalServerError:
+      description: Unexpected server error — details are not exposed to clients
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            status: 500
+            error: "Internal Server Error"
+            message: "An unexpected error occurred"
+            details: []
+            timestamp: "2026-02-12T10:00:00Z"
+            path: "/api/v1/employees"
+
+  # ── Schemas ──────────────────────────────────────────────────────────────
+  schemas:
+
+    # ── Request schemas ────────────────────────────────────────────────────
+
+    CreateEmployeeRequest:
+      type: object
+      required:
+        - firstName
+        - lastName
+        - email
+        - department
+        - role
+        - hireDate
+      properties:
+        firstName:
+          type: string
+          minLength: 1
+          maxLength: 100
+          description: Employee's first name
+          example: "Jane"
+        lastName:
+          type: string
+          minLength: 1
+          maxLength: 100
+          description: Employee's last name
+          example: "Smith"
+        email:
+          type: string
+          format: email
+          description: Unique email address across all employees (including inactive)
+          example: "jane.smith@example.com"
+        department:
+          type: string
+          minLength: 1
+          maxLength: 100
+          description: Department name
+          example: "Engineering"
+        role:
+          type: string
+          minLength: 1
+          maxLength: 100
+          description: Job title/role
+          example: "Senior Developer"
+        hireDate:
+          type: string
+          format: date
+          description: Hire date in ISO 8601 format (must not be in the future)
+          example: "2025-03-15"
+        managerId:
+          type: string
+          format: uuid
+          nullable: true
+          description: UUID of the manager (null for top-level / root employees)
+          example: "a0000000-0000-0000-0000-000000000002"
+
+    UpdateEmployeeRequest:
+      type: object
+      description: |
+        Partial update — include only the fields you want to change.
+        Omitted fields keep their current values.
+        `version` is required to detect concurrent modifications.
+      properties:
+        firstName:
+          type: string
+          minLength: 1
+          maxLength: 100
+          example: "Jane"
+        lastName:
+          type: string
+          minLength: 1
+          maxLength: 100
+          example: "Smith"
+        email:
+          type: string
+          format: email
+          example: "jane.new@example.com"
+        department:
+          type: string
+          minLength: 1
+          maxLength: 100
+          example: "Platform Engineering"
+        role:
+          type: string
+          minLength: 1
+          maxLength: 100
+          example: "Staff Engineer"
+        hireDate:
+          type: string
+          format: date
+          example: "2025-03-15"
+        managerId:
+          type: string
+          format: uuid
+          nullable: true
+          example: "a0000000-0000-0000-0000-000000000002"
+        status:
+          type: string
+          enum: [ACTIVE, INACTIVE]
+          description: Status can only be changed to INACTIVE via the DELETE endpoint; kept here for completeness
+        version:
+          type: integer
+          format: int64
+          description: Current version of the resource (from the last GET response). Required for optimistic locking.
+          example: 0
+
+    # ── Response schemas ───────────────────────────────────────────────────
+
+    EmployeeResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "f47ac10b-58cc-4372-a567-0e02b2c3d479"
+        firstName:
+          type: string
+          example: "Jane"
+        lastName:
+          type: string
+          example: "Smith"
+        email:
+          type: string
+          format: email
+          example: "jane.smith@example.com"
+        department:
+          type: string
+          example: "Engineering"
+        role:
+          type: string
+          example: "Senior Developer"
+        hireDate:
+          type: string
+          format: date
+          example: "2025-03-15"
+        managerId:
+          type: string
+          format: uuid
+          nullable: true
+          example: "a0000000-0000-0000-0000-000000000002"
+        status:
+          type: string
+          enum: [ACTIVE, INACTIVE]
+          example: "ACTIVE"
+        version:
+          type: integer
+          format: int64
+          description: Used for optimistic locking — send this back on PATCH requests
+          example: 0
+        createdAt:
+          type: string
+          format: date-time
+          example: "2026-02-12T10:00:00Z"
+        updatedAt:
+          type: string
+          format: date-time
+          example: "2026-02-12T10:00:00Z"
+
+    PagedEmployeeResponse:
+      type: object
+      description: Paginated wrapper around a list of employees
+      properties:
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/EmployeeResponse'
+        page:
+          type: integer
+          description: Current page index (zero-based)
+          example: 0
+        size:
+          type: integer
+          description: Page size requested
+          example: 20
+        totalElements:
+          type: integer
+          format: int64
+          description: Total number of matching records across all pages
+          example: 42
+        totalPages:
+          type: integer
+          description: Total number of pages for the given size
+          example: 3
+
+    # ── Error schemas ──────────────────────────────────────────────────────
+
+    ErrorResponse:
+      type: object
+      required:
+        - status
+        - error
+        - message
+        - details
+        - timestamp
+        - path
+      properties:
+        status:
+          type: integer
+          description: HTTP status code
+          example: 422
+        error:
+          type: string
+          description: HTTP status reason phrase
+          example: "Unprocessable Entity"
+        message:
+          type: string
+          description: Human-readable description of the error
+          example: "Validation failed"
+        details:
+          type: array
+          description: Per-field validation errors (empty for non-validation errors)
+          items:
+            $ref: '#/components/schemas/ValidationErrorDetail'
+        timestamp:
+          type: string
+          format: date-time
+          description: UTC timestamp when the error occurred
+          example: "2026-02-12T10:00:00Z"
+        path:
+          type: string
+          description: Request path that caused the error
+          example: "/api/v1/employees"
+
+    ValidationErrorDetail:
+      type: object
+      required:
+        - field
+        - message
+      properties:
+        field:
+          type: string
+          description: Name of the field that failed validation
+          example: "email"
+        message:
+          type: string
+          description: Validation constraint message for this field
+          example: "must be a well-formed email address"
