@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>TimeTracker - Enterprise Dark Calendar</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            charcoal: '#264653', // Deep teal/dark from palette
+            'dark-bg': '#0f172a', // Main background from SCREEN_9
+            'dark-surface': '#1e293b', // Sidebar/Header surface from SCREEN_9
+            teal: '#2a9d8f', // Secondary/Accent from palette
+            sand: '#e9c46a', // Yellow from palette
+            orange: '#f4a261', // Orange from palette
+            terracotta: '#e76f51', // Coral/Terracotta from palette
+          },
+          borderRadius: {
+            'twelve': '12px',
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          },
+        }
+      }
+    }
+  </script>
+<style type="text/tailwindcss">
+    .glass-card {
+      background: rgba(30, 41, 59, 0.7);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .calendar-grid-line {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      border-right: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    .drag-preview {
+      background: rgba(42, 157, 143, 0.1);
+      border: 2px dashed #2a9d8f;
+    }
+    .sidebar-width { width: 64px; }
+    .header-height { height: 64px; }
+    .content-height { height: calc(100vh - 64px); }
+    .time-col-width { width: 60px; }
+    .calendar-row-height { height: 60px; }
+    .main-bg-pattern {
+      background-color: #0f172a;
+      background-image: radial-gradient(circle at 2px 2px, #1e293b 1px, transparent 0);
+      background-size: 40px 40px;
+    }
+  </style>
+</head>
+<body class="main-bg-pattern font-sans text-slate-300 antialiased overflow-hidden">
+<div class="flex h-screen w-full">
+<aside class="sidebar-width bg-dark-bg/80 backdrop-blur-md flex flex-col items-center py-6 gap-8 z-20 border-r border-white/10" data-purpose="navigation-sidebar">
+<div class="w-10 h-10 bg-teal rounded-twelve flex items-center justify-center text-charcoal font-bold text-xl mb-4">
+      T
+    </div>
+<nav class="flex flex-col gap-6 text-slate-500">
+<a class="p-2 hover:bg-white/10 rounded-twelve transition-colors text-teal" href="#">
+<svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</a>
+<a class="p-2 hover:bg-white/10 rounded-twelve transition-colors" href="#">
+<svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</a>
+<a class="p-2 hover:bg-white/10 rounded-twelve transition-colors" href="#">
+<svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</a>
+<div class="mt-auto flex flex-col gap-6">
+<a class="p-2 hover:bg-white/10 rounded-twelve transition-colors" href="#">
+<svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+<path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</a>
+</div>
+</nav>
+</aside>
+<main class="flex-1 flex flex-col overflow-hidden">
+<header class="header-height bg-dark-bg/80 backdrop-blur-md border-b border-white/5 flex items-center justify-between px-8 z-10" data-purpose="top-navigation">
+<div class="flex items-center gap-6">
+<h1 class="text-xl font-bold text-white">Weekly Schedule</h1>
+<div class="flex items-center bg-white/5 p-1 rounded-twelve border border-white/5">
+<button class="px-4 py-1.5 text-sm font-semibold rounded-twelve bg-white/10 shadow-sm text-teal">Week</button>
+<button class="px-4 py-1.5 text-sm font-medium text-slate-500 hover:text-white transition-colors">Workdays</button>
+<button class="px-4 py-1.5 text-sm font-medium text-slate-500 hover:text-white transition-colors">Day</button>
+<button class="px-4 py-1.5 text-sm font-medium text-slate-500 hover:text-white transition-colors">Month</button>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-2 mr-4">
+<button class="p-2 hover:bg-white/5 rounded-full text-slate-500">
+<svg class="h-5 w-5" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M15 19l-7-7 7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+</button>
+<span class="font-semibold text-white">Oct 16 — 22, 2023</span>
+<button class="p-2 hover:bg-white/5 rounded-full text-slate-500">
+<svg class="h-5 w-5" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+</button>
+</div>
+<button class="bg-teal text-charcoal px-5 py-2 rounded-twelve font-bold shadow-lg shadow-teal/20 hover:scale-[1.02] transition-transform">
+          + New Entry
+        </button>
+</div>
+</header>
+<div class="content-height p-6 overflow-auto">
+<div class="glass-card rounded-twelve shadow-2xl min-w-[900px] overflow-hidden">
+<div class="flex border-b border-white/5 bg-white/5">
+<div class="time-col-width shrink-0"></div>
+<div class="flex-1 grid grid-cols-7 text-center py-4">
+<div class="flex flex-col gap-1">
+<span class="text-xs uppercase tracking-wider text-slate-500 font-bold">Mon</span>
+<span class="text-2xl font-semibold text-slate-300">16</span>
+</div>
+<div class="flex flex-col gap-1">
+<span class="text-xs uppercase tracking-wider text-slate-500 font-bold">Tue</span>
+<span class="text-2xl font-semibold text-slate-300">17</span>
+</div>
+<div class="flex flex-col gap-1">
+<span class="text-xs uppercase tracking-wider text-teal font-bold">Wed</span>
+<span class="text-2xl font-bold text-charcoal bg-teal rounded-full w-10 h-10 flex items-center justify-center mx-auto -mt-1 shadow-md">18</span>
+</div>
+<div class="flex flex-col gap-1">
+<span class="text-xs uppercase tracking-wider text-slate-500 font-bold">Thu</span>
+<span class="text-2xl font-semibold text-slate-300">19</span>
+</div>
+<div class="flex flex-col gap-1">
+<span class="text-xs uppercase tracking-wider text-slate-500 font-bold">Fri</span>
+<span class="text-2xl font-semibold text-slate-300">20</span>
+</div>
+<div class="flex flex-col gap-1 opacity-50">
+<span class="text-xs uppercase tracking-wider text-slate-500 font-bold">Sat</span>
+<span class="text-2xl font-semibold text-slate-300">21</span>
+</div>
+<div class="flex flex-col gap-1 opacity-50">
+<span class="text-xs uppercase tracking-wider text-slate-500 font-bold">Sun</span>
+<span class="text-2xl font-semibold text-slate-300">22</span>
+</div>
+</div>
+</div>
+<div class="flex relative bg-white/[0.02]">
+<div class="time-col-width shrink-0 flex flex-col border-r border-white/5">
+<div class="calendar-row-height flex justify-center items-start pt-2 text-xs font-medium text-slate-600">08:00</div>
+<div class="calendar-row-height flex justify-center items-start pt-2 text-xs font-medium text-slate-600">09:00</div>
+<div class="calendar-row-height flex justify-center items-start pt-2 text-xs font-medium text-slate-600">10:00</div>
+<div class="calendar-row-height flex justify-center items-start pt-2 text-xs font-medium text-slate-600">11:00</div>
+<div class="calendar-row-height flex justify-center items-start pt-2 text-xs font-medium text-slate-600">12:00</div>
+<div class="calendar-row-height flex justify-center items-start pt-2 text-xs font-medium text-slate-600">13:00</div>
+<div class="calendar-row-height flex justify-center items-start pt-2 text-xs font-medium text-slate-600">14:00</div>
+<div class="calendar-row-height flex justify-center items-start pt-2 text-xs font-medium text-slate-600">15:00</div>
+<div class="calendar-row-height flex justify-center items-start pt-2 text-xs font-medium text-slate-600">16:00</div>
+<div class="calendar-row-height flex justify-center items-start pt-2 text-xs font-medium text-slate-600">17:00</div>
+</div>
+<div class="flex-1 grid grid-cols-7 relative" id="calendar-grid">
+<div class="absolute inset-0 grid grid-cols-7 pointer-events-none">
+<div class="calendar-grid-line h-full"></div>
+<div class="calendar-grid-line h-full"></div>
+<div class="calendar-grid-line h-full"></div>
+<div class="calendar-grid-line h-full"></div>
+<div class="calendar-grid-line h-full"></div>
+<div class="calendar-grid-line h-full"></div>
+<div class="calendar-grid-line h-full border-r-0"></div>
+</div>
+<div class="absolute inset-0 flex flex-col pointer-events-none">
+<div class="calendar-grid-line w-full calendar-row-height"></div>
+<div class="calendar-grid-line w-full calendar-row-height"></div>
+<div class="calendar-grid-line w-full calendar-row-height"></div>
+<div class="calendar-grid-line w-full calendar-row-height"></div>
+<div class="calendar-grid-line w-full calendar-row-height"></div>
+<div class="calendar-grid-line w-full calendar-row-height"></div>
+<div class="calendar-grid-line w-full calendar-row-height"></div>
+<div class="calendar-grid-line w-full calendar-row-height"></div>
+<div class="calendar-grid-line w-full calendar-row-height"></div>
+<div class="calendar-grid-line w-full calendar-row-height"></div>
+</div>
+<div class="absolute z-10 p-1" style="left: 0%; top: 60px; width: 14.28%; height: 150px;">
+<div class="w-full h-full bg-teal/10 border-l-4 border-teal rounded-r-twelve p-3 overflow-hidden group cursor-pointer hover:bg-teal/20 transition-all shadow-lg shadow-teal/5" data-purpose="time-entry">
+<h4 class="text-xs font-bold text-teal truncate">Project Nexus</h4>
+<p class="text-[10px] text-teal/80">Concept design</p>
+</div>
+</div>
+<div class="absolute z-10 p-1" style="left: 28.57%; top: 120px; width: 14.28%; height: 120px;">
+<div class="w-full h-full bg-orange/10 border-l-4 border-orange rounded-r-twelve p-3 overflow-hidden group cursor-pointer hover:bg-orange/20 transition-all shadow-lg shadow-orange/5" data-purpose="time-entry">
+<h4 class="text-xs font-bold text-orange truncate">Team Meeting</h4>
+<p class="text-[10px] text-orange/80">Weekly Standup</p>
+</div>
+</div>
+<div class="absolute z-10 p-1" style="left: 42.85%; top: 300px; width: 14.28%; height: 180px;">
+<div class="w-full h-full bg-terracotta/10 border-l-4 border-terracotta rounded-r-twelve p-3 overflow-hidden group cursor-pointer hover:bg-terracotta/20 transition-all shadow-lg shadow-terracotta/5" data-purpose="time-entry">
+<h4 class="text-xs font-bold text-terracotta truncate">Deep Work</h4>
+<p class="text-[10px] text-terracotta/80">Backend Infrastructure</p>
+</div>
+</div>
+<div class="absolute z-10 p-1" style="left: 14.28%; top: 360px; width: 14.28%; height: 90px;">
+<div class="drag-preview w-full h-full rounded-twelve flex flex-col items-center justify-center gap-1">
+<svg class="w-5 h-5 text-teal" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M12 6v6m0 0v6m0-6h6m-6 0H6" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+<span class="text-[10px] font-bold text-teal">Release to create</span>
+</div>
+</div>
+<div class="absolute z-20 w-full flex items-center pointer-events-none" style="top: 275px;">
+<div class="w-2 h-2 bg-terracotta rounded-full -ml-1"></div>
+<div class="flex-1 h-px bg-terracotta/40"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+<script data-purpose="calendar-interactivity">
+    document.addEventListener('DOMContentLoaded', () => {
+      const grid = document.getElementById('calendar-grid');
+      grid.addEventListener('mousedown', (e) => {
+        console.log('Drag started at coordinates:', e.clientX, e.clientY);
+      });
+    });
+</script>
+</body></html>

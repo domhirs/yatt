@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Your Day - Enterprise Time Tracking</title>
+<!-- Inter font for clean professional look -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#264653',
+            secondary: '#2a9d8f',
+            accent1: '#e9c46a',
+            accent2: '#f4a261',
+            accent3: '#e76f51',
+            brand: '#2a9d37', // Custom brand color from snapshot
+          },
+          borderRadius: {
+            'twelve': '12px',
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          },
+        }
+      }
+    }
+  </script>
+<style data-purpose="custom-glassmorphism">
+    .glass-card {
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.05);
+    }
+    .main-bg {
+      background-color: #f8fafc;
+      background-image: radial-gradient(circle at 2px 2px, #e2e8f0 1px, transparent 0);
+      background-size: 40px 40px;
+    }
+    .progress-glow {
+      box-shadow: 0 0 15px rgba(42, 157, 143, 0.3);
+    }
+  </style>
+</head>
+<body class="font-sans text-slate-800 main-bg min-h-screen flex overflow-hidden">
+<!-- BEGIN: Sidebar -->
+<aside class="w-64 bg-white border-r border-slate-200 flex flex-col h-screen shrink-0" data-purpose="navigation-sidebar">
+<div class="p-8">
+<div class="flex items-center gap-3 text-primary font-bold text-xl" style="">
+<div class="w-8 h-8 bg-brand rounded-twelve flex items-center justify-center text-white">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+        Chronos
+      </div>
+</div>
+<nav class="flex-1 px-4 space-y-2">
+<a class="flex items-center gap-3 px-4 py-3 bg-slate-100 text-primary font-semibold rounded-twelve" href="#" style="">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+        Your Day
+      </a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-50 rounded-twelve transition-colors" href="#" style="">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+        Timesheets
+      </a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-50 rounded-twelve transition-colors" href="#" style="">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+        Team
+      </a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-50 rounded-twelve transition-colors" href="#" style="">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+        Settings
+      </a>
+</nav>
+<div class="p-4 mt-auto">
+<div class="bg-primary/5 p-4 rounded-twelve border border-primary/10">
+<p class="text-xs text-slate-500 mb-2 uppercase tracking-wider font-bold" style="">Pro Plan</p>
+<p class="text-sm text-primary mb-3" style="">Upgrade for advanced analytics and API access.</p>
+<button class="w-full py-2 bg-primary text-white text-sm font-semibold rounded-lg hover:opacity-90 transition-opacity" style="">Upgrade</button>
+</div>
+</div>
+</aside>
+<!-- END: Sidebar -->
+<main class="flex-1 flex flex-col h-screen overflow-y-auto" data-purpose="main-content-area">
+<!-- BEGIN: Header -->
+<header class="bg-white/50 backdrop-blur-md border-b border-slate-200 flex items-center justify-between sticky top-0 z-10 px-12 py-8">
+<div data-purpose="header-search">
+<div class="relative">
+<span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-400">
+<svg class="h-5 w-5" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</span>
+<input class="block w-64 pl-10 pr-3 py-2 border border-slate-200 rounded-twelve bg-slate-50 focus:ring-secondary focus:border-secondary sm:text-sm" placeholder="Search tasks, teams..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-6" data-purpose="user-actions">
+<button class="relative p-2 text-slate-400 hover:text-primary transition-colors" style="">
+<svg class="h-6 w-6" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+<span class="absolute top-2 right-2 w-2 h-2 bg-accent3 rounded-full border-2 border-white"></span>
+</button>
+<div class="flex items-center gap-3 border-l pl-6 border-slate-200">
+<div class="text-right">
+<p class="text-sm font-semibold text-primary leading-none" style="">Alex Rivera</p>
+<p class="text-xs text-slate-500 mt-1" style="">Product Designer</p>
+</div>
+<img alt="Profile" class="h-10 w-10 rounded-full object-cover border-2 border-white shadow-sm" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCA9eWIDObmI5t3nF3IZKq_cwQnDW0c7KUar46wz9GkIeD9sBBlpgPGn7FxeBDU48Gf4nsB0PDzKTRTcNuUhIk0NYACgfaJchdSxKTqXrcjAwRgTL39ZCbqsxZLA9iXinPS--b0BGE2nB7WOfXakeZ7UBFH2QtZX5KQRPHPwMEGK6hJtxl6SxQJjH53_nnMiO5ZWtdG2mAm-sdd794pxWWJxButqnX4msc8SYRXIHULwexuFPP70QVKulhI2z8xBbCa9LlODuObFOtw" style=""/>
+</div>
+</div>
+</header>
+<!-- END: Header -->
+<!-- BEGIN: Dashboard Content -->
+<div class="p-10 space-y-10">
+<!-- BEGIN: Welcome Section -->
+<section id="welcome-message">
+<h1 class="text-4xl font-bold text-primary" style="">Good morning, Alex!</h1>
+<p class="text-slate-500 mt-2 text-lg" style="">It's Wednesday, May 15th. Here's what's happening today.</p>
+</section>
+<!-- END: Welcome Section -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+<!-- BEGIN: Time Tracking Status -->
+<div class="lg:col-span-2 glass-card rounded-[2rem] p-8 flex flex-col justify-between" data-purpose="coming-time-status">
+<div class="flex justify-between items-start">
+<div>
+<p class="text-slate-500 font-medium mb-1" style="">Coming time</p>
+<div class="flex items-center gap-3">
+<span class="text-5xl font-bold text-primary" style="">09:12</span>
+<span class="px-3 py-1 bg-secondary/10 text-secondary text-xs font-bold rounded-full uppercase tracking-wider" style="">Clocked In</span>
+</div>
+</div>
+<button class="bg-accent3 text-white px-8 py-3 rounded-twelve font-bold hover:shadow-lg hover:scale-[1.02] transition-all" style="">
+              Clock Out
+            </button>
+</div>
+<div class="mt-12" data-purpose="daily-progress">
+<div class="flex justify-between items-end mb-4">
+<div>
+<p class="text-slate-500 text-sm" style="">Working Hours</p>
+<p class="text-2xl font-bold text-primary" style="">6.5 <span class="text-lg font-normal text-slate-400" style="">/ 8.0 hrs</span></p>
+</div>
+<span class="text-secondary font-bold" style="">82%</span>
+</div>
+<div class="w-full bg-slate-100 h-4 rounded-full overflow-hidden">
+<div class="bg-secondary h-full rounded-full progress-glow transition-all duration-1000" style="width: 82.5%"></div>
+</div>
+</div>
+</div>
+<!-- END: Time Tracking Status -->
+<!-- BEGIN: Stats Mini Card -->
+<div class="space-y-6">
+<div class="glass-card rounded-[2rem] p-8 flex items-center gap-6">
+<div class="w-14 h-14 bg-accent1/20 rounded-twelve flex items-center justify-center text-accent1">
+<svg class="h-8 w-8" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+</div>
+<div>
+<p class="text-slate-500 text-sm" style="">Week Efficiency</p>
+<p class="text-2xl font-bold text-primary" style="">94.2%</p>
+</div>
+</div>
+<div class="glass-card rounded-[2rem] p-8 flex items-center gap-6">
+<div class="w-14 h-14 bg-accent2/20 rounded-twelve flex items-center justify-center text-accent2">
+<svg class="h-8 w-8" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+</div>
+<div>
+<p class="text-slate-500 text-sm" style="">Overtime</p>
+<p class="text-2xl font-bold text-primary" style="">2.4 hrs</p>
+</div>
+</div>
+</div>
+<!-- END: Stats Mini Card -->
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-8 pb-10">
+<!-- BEGIN: Important Meetings -->
+<section class="glass-card rounded-[2rem] p-8" data-purpose="meetings-list">
+<div class="flex justify-between items-center mb-6">
+<h2 class="text-xl font-bold text-primary" style=""><span style="font-size: 1.25rem;">Meetings</span></h2>
+<button class="text-secondary text-sm font-semibold hover:underline" style="">View Calendar</button>
+</div>
+<div class="space-y-4">
+<!-- Meeting Item 1 -->
+<div class="flex items-center p-4 bg-white/50 rounded-twelve border border-slate-100 hover:border-secondary transition-colors cursor-pointer group">
+<div class="w-2 h-12 bg-secondary rounded-full mr-4"></div>
+<div class="flex-1">
+<p class="text-sm font-bold text-primary group-hover:text-secondary" style="">Product Sync</p>
+<p class="text-xs text-slate-500" style="">10:30 AM - 11:30 AM • Zoom</p>
+</div>
+<div class="flex -space-x-2">
+<img alt="Attendee" class="w-8 h-8 rounded-full border-2 border-white" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAv2oZdQrj7tFTBUAVcGShz56uTNHYpu_JOOx30CwQBwS7JRu4TZRpRQz1wep-zHdZ5bIZ6oYeSBlkXwvNruAOvM5iyVFBlXm3Q0LUWkZcuo6zDswCJ-7vyW8AHR9MALBURMsgfgmMMUpZPEfvfmJhVM79j4teZsNH2QcEHl67YBEbQZb1qa72jW5XyW1ZqB0M5xBEVDweKybqskhu-uaatrbPz0L2d2ujULOnL2Bb1NjiF4htOqVVubbCqAsFKelojFpfkOlZOwieN" style=""/>
+<img alt="Attendee" class="w-8 h-8 rounded-full border-2 border-white" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAlRtD6Fpsv-Y-Bai0uR1kC34-5IdlHTe4ioKU6TZsgIVPAN0HBMq-rMwl1d-laj6B4M8arUePgLn3eLC4Hi798_YQs5PlTsKDfg082cHQD4iJG3hAXUiLTPE1S_MXZozSs5tfR7jEq1EBIwtDUYmW-9xMeY7WCaaEKfGPR3MwG0p7UDJkHFMnVgU1J9RGHKgeZqOcn6VcDQEAnc8bowVSFuRgZDyHQn6Z6VCeEaGbTNqBZ3W-0ZkiuzoLUcmBpSL85Pn1Wxi_X4NCI" style=""/>
+<div class="w-8 h-8 rounded-full border-2 border-white bg-slate-100 flex items-center justify-center text-[10px] text-slate-500 font-bold" style="">+3</div>
+</div>
+</div>
+<!-- Meeting Item 2 -->
+<div class="flex items-center p-4 bg-white/50 rounded-twelve border border-slate-100 hover:border-secondary transition-colors cursor-pointer group">
+<div class="w-2 h-12 bg-accent2 rounded-full mr-4"></div>
+<div class="flex-1">
+<p class="text-sm font-bold text-primary group-hover:text-secondary" style="">Client Review: Acme Corp</p>
+<p class="text-xs text-slate-500" style="">02:00 PM - 03:00 PM • Meeting Room B</p>
+</div>
+<div class="flex -space-x-2">
+<img alt="Attendee" class="w-8 h-8 rounded-full border-2 border-white" src="https://lh3.googleusercontent.com/aida-public/AB6AXuApcUbICQR_4ykHk010W-kVe6TS3zb9hpqAykNWvSUfZC6bR5TuVjb9idazr0x2NjV9mY6MV89R0fR0NUcY3TK7hIILgoPIvg_5jw0SNRVosv-yOAyTl67StdT9IrEKadoiX6PaVsfwdfwVnjM5XQrc4L1QHL30NLZM2pu9T2lgeWVa8CUVOHR4WKuVOhYIUdNb2zG7-YaUtbMYgFC-p3Tk3udLpMiKm0E-S2fHBC_2p6vIbFKIKvUoYLTKeuG03y5zHBp5QHNdZn9L" style=""/>
+<img alt="Attendee" class="w-8 h-8 rounded-full border-2 border-white" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAFRxZKjmV_Ib-41HvmB3IgjYgIMfhR40EBRZFUs0j0GcLZx4kR3Ix_6x5iEMo7Cax4YhZX9EuILPv15Jmga60-bY-ZSsBatTbAfxTU3RvufMvKurMfdl2tQlc4JsezFYwbtt2IyNscrgyE4g3T9iFjVr9Fbe6-Ux8RgEEaMdZ54dCikjebLt7W94Rdqm83uhMIVxk6auHAE1BBuAznfSUG8YQJowPbyHrrvYIHIDxD7yrUkbo43X1y_lv88msZNrB_Y4Vv9_ZnENAu" style=""/>
+</div>
+</div>
+<!-- Meeting Item 3 -->
+<div class="flex items-center p-4 bg-white/50 rounded-twelve border border-slate-100 hover:border-secondary transition-colors cursor-pointer group">
+<div class="w-2 h-12 bg-accent3 rounded-full mr-4"></div>
+<div class="flex-1">
+<p class="text-sm font-bold text-primary group-hover:text-secondary" style="">Design Crit</p>
+<p class="text-xs text-slate-500" style="">04:30 PM - 05:15 PM • Zoom</p>
+</div>
+<div class="flex -space-x-2">
+<img alt="Attendee" class="w-8 h-8 rounded-full border-2 border-white" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD3LJe3_BCjuBeY-CJHMvVZ_kbdBNSpFcr5Q4-AjE-_UFJJk_neu7qSQ-sX9Hk9EpeGLwwGPdPrbqS6xKQ99PDdqdkRht75PVyPe-RxtvHrdUly0XqX0mhbhy9Wan7tvs3WOaSxEGpyK6A3FIUOqESVk0QSxHu-TUSRJWCvXFz5SfVrufhKvpNS3cgpHlRtPCRLyDGNNG3IDCJ8qn1rp9K5ZlS2Y6imWhfo59GITt70WOVoXJ0DAkdHsPWQvL_-w2ym4m_L1FUOefKS" style=""/>
+<div class="w-8 h-8 rounded-full border-2 border-white bg-slate-100 flex items-center justify-center text-[10px] text-slate-500 font-bold" style="">+8</div>
+</div>
+</div>
+</div>
+</section>
+<!-- END: Important Meetings -->
+<!-- BEGIN: Important Todos -->
+<section class="glass-card rounded-[2rem] p-8" data-purpose="todos-list">
+<div class="flex justify-between items-center mb-6">
+<h2 class="text-xl font-bold text-primary" style="">Todos</h2>
+<button class="bg-primary/5 text-primary p-2 rounded-lg hover:bg-primary/10 transition-colors" style="">
+<svg class="h-5 w-5" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+<path clip-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" fill-rule="evenodd"></path>
+</svg>
+</button>
+</div>
+<div class="space-y-4">
+<!-- Todo Item 1 -->
+<label class="flex items-center p-4 bg-white/40 border border-slate-100 rounded-twelve cursor-pointer hover:bg-white/60 transition-all" style="">
+<input class="w-5 h-5 text-secondary border-slate-300 rounded focus:ring-secondary mr-4" type="checkbox"/>
+<div class="flex-1">
+<p class="text-sm font-medium text-primary" style="">Finalize Q2 Report</p>
+<p class="text-xs text-slate-400" style="">Due today • Finance</p>
+</div>
+<span class="px-2 py-1 bg-accent3/10 text-accent3 text-[10px] font-bold rounded uppercase" style="">High</span>
+</label>
+<!-- Todo Item 2 -->
+<label class="flex items-center p-4 bg-white/40 border border-slate-100 rounded-twelve cursor-pointer hover:bg-white/60 transition-all" style="">
+<input checked="" class="w-5 h-5 text-secondary border-slate-300 rounded focus:ring-secondary mr-4" type="checkbox"/>
+<div class="flex-1 line-through opacity-50">
+<p class="text-sm font-medium text-primary" style="">Review wireframes for Dashboard</p>
+<p class="text-xs text-slate-400" style="">Done • Design</p>
+</div>
+<span class="px-2 py-1 bg-slate-100 text-slate-400 text-[10px] font-bold rounded uppercase" style="">Low</span>
+</label>
+<!-- Todo Item 3 -->
+<label class="flex items-center p-4 bg-white/40 border border-slate-100 rounded-twelve cursor-pointer hover:bg-white/60 transition-all" style="">
+<input class="w-5 h-5 text-secondary border-slate-300 rounded focus:ring-secondary mr-4" type="checkbox"/>
+<div class="flex-1">
+<p class="text-sm font-medium text-primary" style="">Prep presentation for Acme Corp</p>
+<p class="text-xs text-slate-400" style="">Due Tomorrow • Sales</p>
+</div>
+<span class="px-2 py-1 bg-accent2/10 text-accent2 text-[10px] font-bold rounded uppercase" style="">Medium</span>
+</label>
+<!-- Todo Item 4 -->
+<label class="flex items-center p-4 bg-white/40 border border-slate-100 rounded-twelve cursor-pointer hover:bg-white/60 transition-all" style="">
+<input class="w-5 h-5 text-secondary border-slate-300 rounded focus:ring-secondary mr-4" type="checkbox"/>
+<div class="flex-1">
+<p class="text-sm font-medium text-primary" style="">Update project roadmap</p>
+<p class="text-xs text-slate-400" style="">Due Friday • Strategy</p>
+</div>
+<span class="px-2 py-1 bg-accent1/10 text-accent1 text-[10px] font-bold rounded uppercase" style="">Low</span>
+</label>
+</div>
+</section>
+<!-- END: Important Todos -->
+</div>
+</div>
+<!-- END: Dashboard Content -->
+</main>
+<script data-purpose="clock-logic">
+    // Simple script to simulate ticking if needed or handle interactive states
+    document.addEventListener('DOMContentLoaded', () => {
+      console.log('Dashboard initialized in Light Mode');
+    });
+  </script>
+</body></html>

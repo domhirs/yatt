@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Enterprise Time Tracker - Calendar View</title>
+<!-- Tailwind CSS v3 with plugins -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Configuration for Custom Palette -->
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              dark: '#264653',
+              teal: '#2a9d8f',
+              sand: '#e9c46a',
+              orange: '#f4a261',
+              coral: '#e76f51',
+            }
+          },
+          borderRadius: {
+            'xl-plus': '1.5rem',
+            '2xl-plus': '2rem',
+          }
+        }
+      }
+    }
+  </script>
+<!-- Custom Glassmorphism Styles -->
+<style data-purpose="glassmorphism-and-layout">
+    .glass-panel {
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+    }
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      grid-template-rows: auto repeat(5, 1fr);
+    }
+    body {
+      background-color: #f8fafc;
+      overflow: hidden;
+    }
+  </style>
+</head>
+<body class="h-screen flex text-brand-dark font-sans">
+<!-- BEGIN: Sidebar -->
+<aside class="w-20 bg-brand-dark flex flex-col items-center py-8 gap-8 transition-all duration-300" data-purpose="minimized-sidebar">
+<!-- Logo -->
+<div class="w-10 h-10 bg-brand-teal rounded-xl flex items-center justify-center text-white mb-4">
+<svg class="h-6 w-6" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+<!-- Navigation Icons -->
+<nav class="flex flex-col gap-6">
+<div class="p-3 bg-white/10 rounded-xl text-brand-sand cursor-pointer transition hover:bg-white/20">
+<svg class="h-6 w-6" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+<div class="p-3 text-white/50 rounded-xl cursor-pointer transition hover:text-white hover:bg-white/10">
+<svg class="h-6 w-6" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+<div class="p-3 text-white/50 rounded-xl cursor-pointer transition hover:text-white hover:bg-white/10">
+<svg class="h-6 w-6" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+</nav>
+<!-- Bottom Spacer / Settings -->
+<div class="mt-auto p-3 text-white/30 cursor-pointer">
+<svg class="h-6 w-6" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+<path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+</aside>
+<!-- END: Sidebar -->
+<!-- Main Viewport Container -->
+<div class="flex-1 flex flex-col relative overflow-hidden">
+<!-- BEGIN: Top Header -->
+<header class="h-20 bg-white border-b border-slate-100 flex items-center justify-between px-10 shrink-0" data-purpose="top-header">
+<div class="flex items-center gap-4">
+<h1 class="text-2xl font-bold tracking-tight">Time Tracker</h1>
+<div class="h-6 w-px bg-slate-200 mx-2"></div>
+<span class="text-lg text-slate-500 font-medium">October 2023</span>
+</div>
+<div class="flex items-center gap-6">
+<!-- View Toggles -->
+<div class="flex bg-slate-100 p-1 rounded-xl">
+<button class="px-4 py-1.5 text-sm font-semibold rounded-lg transition">Day</button>
+<button class="px-4 py-1.5 text-sm font-semibold rounded-lg transition">Week</button>
+<button class="px-4 py-1.5 text-sm font-semibold bg-white shadow-sm rounded-lg transition">Month</button>
+</div>
+<!-- User Section -->
+<div class="flex items-center gap-3 cursor-pointer">
+<div class="text-right">
+<p class="text-sm font-bold">Alex Rivera</p>
+<p class="text-xs text-slate-400">Enterprise Admin</p>
+</div>
+<div class="w-10 h-10 rounded-full bg-brand-orange text-white flex items-center justify-center font-bold">
+            AR
+          </div>
+</div>
+</div>
+</header>
+<!-- END: Top Header -->
+<!-- Main Content Area with Background Wrapper for Glassmorphism -->
+<main class="flex-1 p-8 relative flex gap-8">
+<!-- BEGIN: Main Calendar Area -->
+<section class="flex-1 bg-white rounded-2xl-plus shadow-sm border border-slate-100 flex flex-col overflow-hidden" data-purpose="calendar-main">
+<!-- Weekday Headers -->
+<div class="grid grid-cols-7 bg-slate-50/50 border-b border-slate-100">
+<div class="p-4 text-center text-xs font-bold text-slate-400 uppercase tracking-widest">Sun</div>
+<div class="p-4 text-center text-xs font-bold text-slate-400 uppercase tracking-widest">Mon</div>
+<div class="p-4 text-center text-xs font-bold text-slate-400 uppercase tracking-widest">Tue</div>
+<div class="p-4 text-center text-xs font-bold text-slate-400 uppercase tracking-widest">Wed</div>
+<div class="p-4 text-center text-xs font-bold text-slate-400 uppercase tracking-widest">Thu</div>
+<div class="p-4 text-center text-xs font-bold text-slate-400 uppercase tracking-widest">Fri</div>
+<div class="p-4 text-center text-xs font-bold text-slate-400 uppercase tracking-widest">Sat</div>
+</div>
+<!-- Calendar Days Grid -->
+<div class="flex-1 grid grid-cols-7 auto-rows-fr">
+<!-- Sample Calendar Cells (Previous Month) -->
+<div class="p-4 border-r border-b border-slate-50 text-slate-300">28</div>
+<div class="p-4 border-r border-b border-slate-50 text-slate-300">29</div>
+<div class="p-4 border-r border-b border-slate-50 text-slate-300">30</div>
+<!-- Sample Days of Current Month -->
+<div class="p-4 border-r border-b border-slate-50 font-medium">1</div>
+<div class="p-4 border-r border-b border-slate-50 font-medium bg-brand-teal/5">
+<span class="inline-block mb-2">2</span>
+<div class="bg-brand-teal text-[10px] text-white p-1 rounded-md mb-1 truncate">8h - Dev Project A</div>
+</div>
+<div class="p-4 border-r border-b border-slate-50 font-medium">3</div>
+<div class="p-4 border-b border-slate-50 font-medium">4</div>
+<!-- Next Row -->
+<div class="p-4 border-r border-b border-slate-50 font-medium">5</div>
+<div class="p-4 border-r border-b border-slate-50 font-medium">6</div>
+<div class="p-4 border-r border-b border-slate-50 font-medium">
+<span class="inline-block mb-2">7</span>
+<div class="bg-brand-orange text-[10px] text-white p-1 rounded-md mb-1 truncate">4h - UI Design</div>
+<div class="bg-brand-coral text-[10px] text-white p-1 rounded-md mb-1 truncate">2h - Meeting</div>
+</div>
+<div class="p-4 border-r border-b border-slate-50 font-medium">8</div>
+<div class="p-4 border-r border-b border-slate-50 font-medium">9</div>
+<div class="p-4 border-r border-b border-slate-50 font-medium">10</div>
+<div class="p-4 border-b border-slate-50 font-medium">11</div>
+<!-- Filling the grid with more cells... -->
+<div class="p-4 border-r border-b border-slate-50 font-medium bg-brand-sand/10">12</div>
+<div class="p-4 border-r border-b border-slate-50 font-bold text-brand-teal ring-2 ring-inset ring-brand-teal/20">13 (Today)</div>
+<div class="p-4 border-r border-b border-slate-50 font-medium">14</div>
+<div class="p-4 border-r border-b border-slate-50 font-medium">15</div>
+<div class="p-4 border-r border-b border-slate-50 font-medium">16</div>
+<div class="p-4 border-r border-b border-slate-50 font-medium">17</div>
+<div class="p-4 border-b border-slate-50 font-medium">18</div>
+<!-- More rows would continue here -->
+<div class="p-4 border-r border-slate-50 font-medium">19</div>
+<div class="p-4 border-r border-slate-50 font-medium">20</div>
+<div class="p-4 border-r border-slate-50 font-medium">21</div>
+<div class="p-4 border-r border-slate-50 font-medium">22</div>
+<div class="p-4 border-r border-slate-50 font-medium">23</div>
+<div class="p-4 border-r border-slate-50 font-medium">24</div>
+<div class="p-4 border-slate-50 font-medium">25</div>
+</div>
+</section>
+<!-- END: Main Calendar Area -->
+<!-- BEGIN: Hovering Daily Summary Panel -->
+<aside class="w-80 glass-panel rounded-2xl-plus p-6 flex flex-col gap-6 sticky top-0 h-fit self-start shadow-xl" data-purpose="daily-summary-glass">
+<div class="flex justify-between items-center">
+<h2 class="text-xl font-bold">Daily Summary</h2>
+<span class="text-xs bg-brand-dark/5 px-2 py-1 rounded text-slate-500 font-bold">Oct 13</span>
+</div>
+<!-- Total Time Large Indicator -->
+<div class="bg-brand-teal/10 rounded-2xl p-6 text-center">
+<p class="text-slate-500 text-sm font-medium uppercase tracking-wider mb-1">Total Tracked</p>
+<h3 class="text-4xl font-black text-brand-teal">06h 45m</h3>
+</div>
+<!-- Project Breakdown -->
+<div>
+<h4 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">Project Breakdown</h4>
+<div class="space-y-4">
+<!-- Project 1 -->
+<div class="flex items-center gap-4">
+<div class="w-3 h-3 rounded-full bg-brand-teal"></div>
+<div class="flex-1">
+<div class="flex justify-between text-sm font-bold mb-1">
+<span>Development</span>
+<span>4h 30m</span>
+</div>
+<div class="w-full bg-slate-200 h-1.5 rounded-full overflow-hidden">
+<div class="bg-brand-teal h-full w-[65%]"></div>
+</div>
+</div>
+</div>
+<!-- Project 2 -->
+<div class="flex items-center gap-4">
+<div class="w-3 h-3 rounded-full bg-brand-orange"></div>
+<div class="flex-1">
+<div class="flex justify-between text-sm font-bold mb-1">
+<span>UI Design</span>
+<span>1h 15m</span>
+</div>
+<div class="w-full bg-slate-200 h-1.5 rounded-full overflow-hidden">
+<div class="bg-brand-orange h-full w-[20%]"></div>
+</div>
+</div>
+</div>
+<!-- Project 3 -->
+<div class="flex items-center gap-4">
+<div class="w-3 h-3 rounded-full bg-brand-coral"></div>
+<div class="flex-1">
+<div class="flex justify-between text-sm font-bold mb-1">
+<span>Sync Meeting</span>
+<span>1h 00m</span>
+</div>
+<div class="w-full bg-slate-200 h-1.5 rounded-full overflow-hidden">
+<div class="bg-brand-coral h-full w-[15%]"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Call to Action -->
+<button class="mt-4 bg-brand-dark text-white py-4 rounded-xl font-bold shadow-lg shadow-brand-dark/20 hover:bg-brand-dark/90 transition-all flex items-center justify-center gap-2">
+<svg class="h-5 w-5" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+<path clip-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" fill-rule="evenodd"></path>
+</svg>
+          Log New Entry
+        </button>
+</aside>
+<!-- END: Hovering Daily Summary Panel -->
+</main>
+</div>
+</body></html>
