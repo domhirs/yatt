@@ -18,6 +18,7 @@ Stage (milestone)
 
 | Artifact | Path |
 |---|---|
+| **TODO checklist** | [`docs/TODO.md`](TODO.md) |
 | Backlog (all stories) | [`docs/stories/BACKLOG.md`](stories/BACKLOG.md) |
 | Story files | `docs/stories/stage{N}/S{N}-{NNN}-*.md` |
 | Task files | `docs/tasks/stage{N}/S{N}-{NNN}/T-{NNN}-{NN}-*.md` |
@@ -87,7 +88,7 @@ Stage (milestone)
    - One logical change per commit
    - Reference the story ID in the commit message (e.g., `feat(S1-005): implement create employee endpoint`)
 
-8. **Mark as done** — Update the task status to `Done` and the story status to `Done` when all tasks are complete.
+8. **Mark as done** — When a task is fully complete, check it off (`[x]`) in [`TODO.md`](TODO.md). When all tasks of a story are done, check off the story too. Also update the task status to `Done` and the story status to `Done` when all tasks are complete.
 
 ---
 
@@ -146,6 +147,7 @@ Each task file contains:
 A story is **Done** when:
 
 - [ ] All task checklists are complete
+- [ ] All tasks and story checked off in [`TODO.md`](TODO.md)
 - [ ] All acceptance criteria pass
 - [ ] Unit tests written and passing (80%+ service coverage)
 - [ ] Integration tests passing (where applicable)
