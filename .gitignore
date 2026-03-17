@@ -31,6 +31,9 @@ node_modules/
 dist/
 .angular/
 
+# === Learning portal (throwaway, not part of yatt) ===
+learning-portal/
+
 # === Logs ===
 *.log
 
