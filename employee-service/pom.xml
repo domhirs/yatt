@@ -72,6 +72,13 @@
             <optional>true</optional>
         </dependency>
 
+        <!-- SpringDoc OpenAPI — provides io.swagger.v3.oas.annotations used by generated interfaces -->
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+            <version>2.8.6</version>
+        </dependency>
+
         <!-- Test -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -81,10 +88,91 @@
     </dependencies>
 
     <build>
+        <pluginManagement>
+            <plugins>
+                <!--
+                    Tell the Eclipse/VS Code M2E IDE plugin to skip the OpenAPI generator.
+                    The generator only needs to run via `mvn generate-sources` on the CLI —
+                    the output is checked into target/ and the IDE picks it up as a source root.
+                    Without this, M2E tries to re-run the generator on every incremental build
+                    and fails due to Windows path handling differences in the IDE environment.
+                -->
+                <plugin>
+                    <groupId>org.eclipse.m2e</groupId>
+                    <artifactId>lifecycle-mapping</artifactId>
+                    <version>1.0.0</version>
+                    <configuration>
+                        <lifecycleMappingMetadata>
+                            <pluginExecutions>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>org.openapitools</groupId>
+                                        <artifactId>openapi-generator-maven-plugin</artifactId>
+                                        <versionRange>[7.0.0,)</versionRange>
+                                        <goals>
+                                            <goal>generate</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <ignore/>
+                                    </action>
+                                </pluginExecution>
+                            </pluginExecutions>
+                        </lifecycleMappingMetadata>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+
+            <!--
+                OpenAPI Generator — produces controller interfaces from the spec.
+                Runs automatically during the `generate-sources` Maven phase (before compile).
+
+                KEY CHOICES:
+                  interfaceOnly=true   → generates interfaces, not concrete controllers
+                  generateModels=false → we hand-write DTOs as Java records (T-004)
+                  useTags=true         → one interface per OpenAPI tag:
+                                           EmployeesApi  (tag: Employees)
+                                           OrgChartApi   (tag: Org Chart)
+                  useSpringBoot3=true  → jakarta.* imports (required for Spring Boot 4)
+                  useSwaggerAnnotations=false → avoids pulling in io.swagger dependency
+                  openApiNullable=false → avoids JsonNullable<T> wrappers on nullable fields
+
+                Generated output: target/generated-sources/openapi/  (not committed to git)
+                Your controller:  @RestController implements EmployeesApi { ... }
+            -->
+            <plugin>
+                <groupId>org.openapitools</groupId>
+                <artifactId>openapi-generator-maven-plugin</artifactId>
+                <version>7.12.0</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <inputSpec>../docs/api/employee-service.yaml</inputSpec>
+                            <generatorName>spring</generatorName>
+                            <apiPackage>com.timetracker.employee.api</apiPackage>
+                            <modelPackage>com.timetracker.employee.dto</modelPackage>
+                            <generateModels>false</generateModels>
+                            <configOptions>
+                                <useSpringBoot3>true</useSpringBoot3>
+                                <interfaceOnly>true</interfaceOnly>
+                                <useTags>true</useTags>
+                                <dateLibrary>java8-localdatetime</dateLibrary>
+                                <openApiNullable>false</openApiNullable>
+                                <useSwaggerAnnotations>false</useSwaggerAnnotations>
+                            </configOptions>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
