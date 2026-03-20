@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 820" width="920" height="820">
+  <defs>
+    <!-- Hand-drawn roughness filter for shapes -->
+    <filter id="rough" x="-5%" y="-5%" width="110%" height="110%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="3" seed="4" result="noise"/>
+      <feDisplacementMap in="SourceGraphic" in2="noise" scale="2.5" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+    <!-- Slightly stronger filter for arrow lines -->
+    <filter id="rough-line" x="-30%" y="-30%" width="160%" height="160%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.05" numOctaves="2" seed="9" result="noise"/>
+      <feDisplacementMap in="SourceGraphic" in2="noise" scale="3" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+
+    <!-- Arrowhead marker -->
+    <marker id="arr" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#495057"/>
+    </marker>
+
+    <!-- Hachure (diagonal line) fill patterns -->
+    <pattern id="hatch-red" patternUnits="userSpaceOnUse" width="8" height="8" patternTransform="rotate(45)">
+      <line x1="0" y1="0" x2="0" y2="8" stroke="#c92a2a" stroke-width="0.7" opacity="0.4"/>
+    </pattern>
+    <pattern id="hatch-green" patternUnits="userSpaceOnUse" width="8" height="8" patternTransform="rotate(45)">
+      <line x1="0" y1="0" x2="0" y2="8" stroke="#5c940d" stroke-width="0.7" opacity="0.4"/>
+    </pattern>
+    <pattern id="hatch-blue" patternUnits="userSpaceOnUse" width="8" height="8" patternTransform="rotate(45)">
+      <line x1="0" y1="0" x2="0" y2="8" stroke="#1971c2" stroke-width="0.7" opacity="0.35"/>
+    </pattern>
+    <pattern id="hatch-orange" patternUnits="userSpaceOnUse" width="8" height="8" patternTransform="rotate(45)">
+      <line x1="0" y1="0" x2="0" y2="8" stroke="#e8590c" stroke-width="0.7" opacity="0.4"/>
+    </pattern>
+    <pattern id="hatch-purple" patternUnits="userSpaceOnUse" width="8" height="8" patternTransform="rotate(45)">
+      <line x1="0" y1="0" x2="0" y2="8" stroke="#862e9c" stroke-width="0.7" opacity="0.4"/>
+    </pattern>
+    <pattern id="hatch-bluedb" patternUnits="userSpaceOnUse" width="8" height="8" patternTransform="rotate(45)">
+      <line x1="0" y1="0" x2="0" y2="8" stroke="#1971c2" stroke-width="0.7" opacity="0.28"/>
+    </pattern>
+    <pattern id="hatch-nats" patternUnits="userSpaceOnUse" width="8" height="8" patternTransform="rotate(45)">
+      <line x1="0" y1="0" x2="0" y2="8" stroke="#2f9e44" stroke-width="0.7" opacity="0.4"/>
+    </pattern>
+  </defs>
+
+  <!-- Paper background -->
+  <rect width="920" height="820" fill="#f8f9fa"/>
+
+  <!-- ═══════════════════ TITLE ═══════════════════ -->
+  <text x="460" y="42" text-anchor="middle"
+        font-family="Arial, sans-serif" font-size="26" font-weight="700"
+        fill="#1e1e1e" letter-spacing="0.3">
+    yatt  —  Platform Architecture
+  </text>
+
+  <!-- ═══════════════════ ANGULAR SPA ═══════════════════ -->
+  <g filter="url(#rough)">
+    <rect x="350" y="68" width="220" height="58" rx="10"
+          fill="#ffc9c9" stroke="#c92a2a" stroke-width="2.5"/>
+    <rect x="350" y="68" width="220" height="58" rx="10"
+          fill="url(#hatch-red)" stroke="none"/>
+  </g>
+  <text x="460" y="93" text-anchor="middle"
+        font-family="Arial, sans-serif" font-size="15" font-weight="700" fill="#c92a2a">
+    Angular 21  SPA
+  </text>
+  <text x="460" y="113" text-anchor="middle"
+        font-family="Arial, sans-serif" font-size="12" fill="#c92a2a">
+    (Stage 2+)
+  </text>
+
+  <!-- Arrow: Angular → Gateway -->
+  <line x1="460" y1="126" x2="460" y2="172"
+        stroke="#495057" stroke-width="2" stroke-linecap="round"
+        marker-end="url(#arr)" filter="url(#rough-line)"/>
+  <text x="474" y="153"
+        font-family="Arial, sans-serif" font-size="11" fill="#868e96">
+    HTTPS / JSON
+  </text>
+
+  <!-- ═══════════════════ API GATEWAY ═══════════════════ -->
+  <g filter="url(#rough)">
+    <rect x="295" y="172" width="330" height="67" rx="10"
+          fill="#d8f5a2" stroke="#5c940d" stroke-width="2.5"/>
+    <rect x="295" y="172" width="330" height="67" rx="10"
+          fill="url(#hatch-green)" stroke="none"/>
+  </g>
+  <text x="460" y="199" text-anchor="middle"
+        font-family="Arial, sans-serif" font-size="16" font-weight="700" fill="#5c940d">
+    API Gateway
+  </text>
+  <text x="460" y="220" text-anchor="middle"
+        font-family="Arial, sans-serif" font-size="13" fill="#5c940d">
+    (Spring Cloud Gateway)
+  </text>
+
+  <!-- Arrows: Gateway → Services (fan out) -->
+  <line x1="376" y1="239" x2="192" y2="314"
+        stroke="#495057" stroke-width="2" stroke-linecap="round"
+        marker-end="url(#arr)" filter="url(#rough-line)"/>
+  <line x1="460" y1="239" x2="460" y2="314"
+        stroke="#495057" stroke-width="2" stroke-linecap="round"
+        marker-end="url(#arr)" filter="url(#rough-line)"/>
+  <line x1="544" y1="239" x2="728" y2="314"
+        stroke="#495057" stroke-width="2" stroke-linecap="round"
+        marker-end="url(#arr)" filter="url(#rough-line)"/>
+  <text x="460" y="267" text-anchor="middle"
+        font-family="Arial, sans-serif" font-size="11" fill="#868e96">
+    REST (sync)
+  </text>
+
+  <!-- ═══════════════════ EMPLOYEE SERVICE ═══════════════════ -->
+  <g filter="url(#rough)">
+    <rect x="78" y="314" width="224" height="102" rx="10"
+          fill="#a5d8ff" stroke="#1971c2" stroke-width="2.5"/>
+    <rect x="78" y="314" width="224" height="102" rx="10"
+          fill="url(#hatch-blue)" stroke="none"/>
+  </g>
+  <text x="190" y="346" text-anchor="middle"
+        font-family="Arial, sans-serif" font-size="14" font-weight="700" fill="#1971c2">
+    Employee Service
+  </text>
+  <text x="190" y="366" text-anchor="middle"
+        font-family="Arial, sans-serif" font-size="13" fill="#1971c2">
+    (Spring Boot 4)
+  </text>
+  <text x="190" y="385" text-anchor="middle"
+        font-family="Arial, sans-serif" font-size="11" fill="#1971c2">
+    Stage 1  [current]
+  </text>
+
+  <!-- ═══════════════════ TIME TRACKING ═══════════════════ -->
+  <g filter="url(#rough)">
+    <rect x="348" y="314" width="224" height="102" rx="10"
+          fill="#ffd8a8" stroke="#e8590c" stroke-width="2.5"/>
+    <rect x="348" y="314" width="224" height="102" rx="10"
+          fill="url(#hatch-orange)" stroke="none"/>
+  </g>
+  <text x="460" y="346" text-anchor="middle"
+        font-family="Arial, sans-serif" font-size="14" font-weight="700" fill="#e8590c">
+    Time Tracking
+  </text>
+  <text x="460" y="366" text-anchor="middle"
+        font-family="Arial, sans-serif" font-size="13" fill="#e8590c">
+    (Quarkus 3.32+)
+  </text>
+  <text x="460" y="385" text-anchor="middle"
+        font-family="Arial, sans-serif" font-size="11" fill="#e8590c">
+    Stage 2
+  </text>
+
+  <!-- ═══════════════════ VACATION WORKFLOW ═══════════════════ -->
+  <g filter="url(#rough)">
+    <rect x="618" y="314" width="224" height="102" rx="10"
+          fill="#e5dbff" stroke="#862e9c" stroke-width="2.5"/>
+    <rect x="618" y="314" width="224" height="102" rx="10"
+          fill="url(#hatch-purple)" stroke="none"/>
+  </g>
+  <text x="730" y="346" text-anchor="middle"
+        font-family="Arial, sans-serif" font-size="14" font-weight="700" fill="#862e9c">
+    Vacation Workflow
+  </text>
+  <text x="730" y="366" text-anchor="middle"
+        font-family="Arial, sans-serif" font-size="13" fill="#862e9c">
+    (Spring Boot 4)
+  </text>
+  <text x="730" y="385" text-anchor="middle"
+        font-family="Arial, sans-serif" font-size="11" fill="#862e9c">
+    Stage 4
+  </text>
+
+  <!-- Arrows: Services → PostgreSQL -->
+  <line x1="190" y1="416" x2="190" y2="472"
+        stroke="#495057" stroke-width="2" stroke-linecap="round"
+        marker-end="url(#arr)" filter="url(#rough-line)"/>
+  <line x1="460" y1="416" x2="460" y2="472"
+        stroke="#495057" stroke-width="2" stroke-linecap="round"
+        marker-end="url(#arr)" filter="url(#rough-line)"/>
+  <line x1="730" y1="416" x2="730" y2="472"
+        stroke="#495057" stroke-width="2" stroke-linecap="round"
+        marker-end="url(#arr)" filter="url(#rough-line)"/>
+  <text x="460" y="445" text-anchor="middle"
+        font-family="Arial, sans-serif" font-size="11" fill="#868e96">
+    SQL / JDBC
+  </text>
+
+  <!-- ═══════════════════ POSTGRESQL ═══════════════════ -->
+  <g filter="url(#rough)">
+    <rect x="53" y="472" width="814" height="88" rx="10"
+          fill="#d0ebff" stroke="#1971c2" stroke-width="2.5"/>
+    <rect x="53" y="472" width="814" height="88" rx="10"
+          fill="url(#hatch-bluedb)" stroke="none"/>
+  </g>
+  <text x="460" y="502" text-anchor="middle"
+        font-family="Arial, sans-serif" font-size="15" font-weight="700" fill="#1971c2">
+    PostgreSQL 17  (single instance  ·  schema per service)
+  </text>
+  <text x="460" y="524" text-anchor="middle"
+        font-family="Arial, sans-serif" font-size="12.5" fill="#1971c2">
+    | employee | time_series (TimescaleDB) | budget | project | vacation |
+  </text>
+  <text x="460" y="545" text-anchor="middle"
+        font-family="Arial, sans-serif" font-size="11" fill="#1971c2" opacity="0.7">
+    Flyway migrations  ·  logical isolation, single deployment
+  </text>
+
+  <!-- Arrow: PostgreSQL → NATS -->
+  <line x1="460" y1="560" x2="460" y2="600"
+        stroke="#495057" stroke-width="2" stroke-linecap="round"
+        marker-end="url(#arr)" filter="url(#rough-line)"/>
+  <text x="474" y="584"
+        font-family="Arial, sans-serif" font-size="11" fill="#868e96">
+    async events
+  </text>
+
+  <!-- ═══════════════════ NATS JETSTREAM ═══════════════════ -->
+  <g filter="url(#rough)">
+    <rect x="53" y="600" width="814" height="72" rx="10"
+          fill="#b2f2bb" stroke="#2f9e44" stroke-width="2.5"/>
+    <rect x="53" y="600" width="814" height="72" rx="10"
+          fill="url(#hatch-nats)" stroke="none"/>
+  </g>
+  <text x="460" y="629" text-anchor="middle"
+        font-family="Arial, sans-serif" font-size="15" font-weight="700" fill="#2f9e44">
+    NATS JetStream  (async event bus  ·  ~20 MB  ·  built-in persistence)
+  </text>
+  <text x="460" y="652" text-anchor="middle"
+        font-family="Arial, sans-serif" font-size="12" fill="#2f9e44">
+    employee.created  ·  employee.deactivated  ·  time.entry.submitted  ·  ...
+  </text>
+
+  <!-- ═══════════════════ LEGEND ═══════════════════ -->
+  <text x="53" y="705" font-family="Arial, sans-serif" font-size="13"
+        font-weight="700" fill="#495057">Stage legend</text>
+  <rect x="53" y="717" width="13" height="13" rx="2"
+        fill="#a5d8ff" stroke="#1971c2" stroke-width="1"/>
+  <text x="73" y="729" font-family="Arial, sans-serif" font-size="12" fill="#1e1e1e">
+    Stage 1 — Employee API
+  </text>
+  <rect x="53" y="739" width="13" height="13" rx="2"
+        fill="#ffd8a8" stroke="#e8590c" stroke-width="1"/>
+  <text x="73" y="751" font-family="Arial, sans-serif" font-size="12" fill="#1e1e1e">
+    Stage 2 — Time Tracking
+  </text>
+  <rect x="53" y="761" width="13" height="13" rx="2"
+        fill="#d8f5a2" stroke="#5c940d" stroke-width="1"/>
+  <text x="73" y="773" font-family="Arial, sans-serif" font-size="12" fill="#1e1e1e">
+    Stage 3 — Budget &amp; Planning
+  </text>
+  <rect x="53" y="783" width="13" height="13" rx="2"
+        fill="#e5dbff" stroke="#862e9c" stroke-width="1"/>
+  <text x="73" y="795" font-family="Arial, sans-serif" font-size="12" fill="#1e1e1e">
+    Stage 4 — Vacation &amp; Dashboards
+  </text>
+</svg>

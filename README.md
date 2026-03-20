@@ -42,38 +42,7 @@ It is also, eventually, a real application:
 
 ## 🏗️ Architecture
 
-```
-                        ┌───────────┐
-                        │  Angular  │
-                        │  SPA (21) │
-                        └─────┬─────┘
-                              │ HTTPS / JSON
-                              ▼
-                     ┌────────────────┐
-                     │  API Gateway   │
-                     │ (Spring Cloud) │
-                     └───────┬────────┘
-                             │
-           ┌─────────────────┼─────────────────┐
-           │                 │                 │
-     ┌─────▼──────┐   ┌──────▼─────┐   ┌──────▼──────┐
-     │  Employee  │   │    Time    │   │  Vacation   │
-     │  Service   │   │  Tracking  │   │  Workflow   │
-     │ Spring Boot│   │  (Quarkus) │   │ Spring Boot │
-     └─────┬──────┘   └──────┬─────┘   └──────┬──────┘
-           │                 │                 │
-           └─────────────────┼─────────────────┘
-                             │
-                    ┌────────▼────────┐
-                    │  PostgreSQL 17  │
-                    │ schema per svc  │
-                    │ + TimescaleDB   │
-                    └────────┬────────┘
-                             │
-                    ┌────────▼────────┐
-                    │ NATS JetStream  │
-                    └─────────────────┘
-```
+![Architecture diagram](docs/diagrams/readme-architecture.svg)
 
 Each service is independently deployable and owns its schema. Services talk synchronously via REST (user-initiated requests) and asynchronously via NATS events (domain events like `employee.deactivated`).
 
